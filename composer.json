@@ -7,7 +7,7 @@
     "license": "Unlicense",
     "minimum-stability": "dev",
     "require": {
-        "php": ">=5.4.0",
+        "php": ">=8.2",
         "league/event": "2.1.2"
     },
 
@@ -20,7 +20,7 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7",
+        "phpunit/phpunit": "^10",
         "fzaninotto/faker": "^1.6"
     }
 }
