@@ -1,4 +1,9 @@
 <?php
+
+namespace JiraWebhook\Models;
+
+use JiraWebhook\Exceptions\JiraWebhookDataException;
+
 /**
  * Class that parses JIRA webhook data and gives access to it.
  *
@@ -8,90 +13,40 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace JiraWebhook\Models;
-
-use JiraWebhook\Exceptions\JiraWebhookDataException;
-
 class JiraWebhookData
 {
     /**
      * Decoded raw data
-     * 
-     * @var
      */
-    protected $rawData;
+    protected array $rawData = [];
 
-    /**
-     * Webhook timestamp
-     *
-     * @var
-     */
-    protected $timestamp;
+    protected ?int $timestamp;
 
-    /**
-     * Webhook event
-     *
-     * @var
-     */
-    protected $webhookEvent;
+    protected string $webhookEvent;
 
-    /**
-     * Webhook issue event
-     *
-     * @var
-     */
-    protected $issueEvent;
+    protected ?string $issueEvent;
 
-    /**
-     * Webhook issue event human readable description
-     *
-     * @var
-     */
-    //protected $issueEventDescription;
+    protected ?JiraUser $user;
 
-    /**
-     * JiraWebhook\Models\JiraUser
-     *
-     * @var
-     */
-    protected $user;
+    protected ?JiraIssue $issue;
 
-    /**
-     * JiraWebhook\Models\JiraIssue
-     * 
-     * @var
-     */
-    protected $issue;
+    protected ?JiraChangelog $changelog;
 
-    /**
-     * @var
-     */
-    protected $changelog;
-
-    /**
-     * Webook Jira worklog
-     *
-     * @var JiraWorklog
-     */
-    protected $workLog;
+    protected ?JiraWorklog $workLog;
 
     /**
      * Parsing JIRA webhook $data
      *
-     * @param null $data
-     * 
-     * @return JiraWebhookData
-     * 
      * @throws JiraWebhookDataException
      */
-    public static function parse($data = null)
+    public static function parse(array $data = null): self
     {
         $webhookData = new self;
-        
+
         if (!$data) {
             return $webhookData;
         }
-        
+
         $webhookData->setRawData($data);
 
         $webhookData->validate($data);
@@ -99,7 +54,6 @@ class JiraWebhookData
         $webhookData->setTimestamp($data['timestamp']);
         $webhookData->setWebhookEvent($data['webhookEvent']);
         $webhookData->setIssueEvent($data['issue_event_type_name']);
-        //$webhookData->setIssueEventDescription($data['issue_event_type_name']);
 
         // For worklogs, best to get the user from the author fields prior to calling this hook.
         $webhookData->setUser(JiraUser::parse($data['user']));
@@ -111,10 +65,9 @@ class JiraWebhookData
     }
 
     /**
-     * @param $data
      * @throws JiraWebhookDataException
      */
-    public function validate($data)
+    public function validate(array $data): void
     {
         if (empty($data['webhookEvent'])) {
             throw new JiraWebhookDataException('JIRA webhook event not set!');
@@ -131,34 +84,19 @@ class JiraWebhookData
 
     /**
      * Check if JIRA issue event is issue commented
-     * 
-     * @return bool
      */
-    public function isIssueCommented()
+    public function isIssueCommented(): bool
     {
         return array_key_exists('comment', $this->rawData);
     }
 
     /**
-     * Check if JIRA issue event is issue assigned
-     * 
-     * @return bool
-     */
-    /*public function isIssueAssigned()
-    {
-        return $this->issueEvent === 'issue_assigned';
-    }*/
-
-    /**
      * Get array of channel labels that referenced in comment
-     *
-     * @param $string
-     *
-     * @return mixed
      */
-    public static function getReferencedLabels($string)
+    public static function getReferencedLabels(string $string): array
     {
         preg_match_all("/#([A-Za-z0-9]*)/", $string, $matches);
+
         return $matches[1];
     }
 
@@ -166,164 +104,85 @@ class JiraWebhookData
 
     /**
      * Set raw array, decoded from JIRA webhook
-     * 
-     * @param $rawData
      */
-    public function setRawData($rawData)
+    public function setRawData(array $rawData): void
     {
         $this->rawData = $rawData;
     }
 
-    /**
-     * @param $timestamp
-     */
-    public function setTimestamp($timestamp)
+    public function setTimestamp(int $timestamp): void
     {
         $this->timestamp = $timestamp;
     }
 
-    /**
-     * @param $webhookEvent
-     */
-    public function setWebhookEvent($webhookEvent)
+    public function setWebhookEvent(string $webhookEvent): void
     {
         $this->webhookEvent = $webhookEvent;
     }
 
-    /**
-     * @param $issueEvent
-     */
-    public function setIssueEvent($issueEvent)
+    public function setIssueEvent(string $issueEvent): void
     {
         $this->issueEvent = $issueEvent;
     }
 
-    /**
-     * @param $issueEvent
-     */
-    /*public function setIssueEventDescription($issueEvent)
-    {
-        $event_descriptions = [
-            'issue_created'   => "A new issue was created",
-            'issue_commented' => "A new comment was added",
-            'issue_updated'   => "The issue was updated",
-            'issue_assigned'  => "The issue was assigned",
-        ];
-        $this->issueEventDescription = isset($event_descriptions[$issueEvent]) ? $event_descriptions[$issueEvent] : '';
-    }*/
-
-    /**
-     * Sets a more descriptive event description, based on the flow of the code
-     *
-     * @param string $description
-     */
-    /*public function overrideIssueEventDescription($description)
-    {
-        $this->issueEventDescription = $description;
-    }*/
-
-    /**
-     * @param $user
-     */
-    public function setUser($user)
+    public function setUser(JiraUser $user): void
     {
         $this->user = $user;
     }
 
-    /**
-     * @param $issueData
-     */
-    public function setIssue($issueData)
+    public function setIssue(JiraIssue $issue): void
     {
-        $this->issue = $issueData;
+        $this->issue = $issue;
     }
 
-    /**
-     * @param $changelog
-     */
-    public function setChangelog($changelog)
+    public function setChangelog(JiraChangelog $changelog): void
     {
         $this->changelog = $changelog;
     }
 
-    /**
-     * @param $changelog
-     */
-    public function setWorklog($worklog)
+    public function setWorklog(JiraWorklog $worklog): void
     {
         $this->workLog = $worklog;
     }
 
     /**************************************************/
 
-    /**
-     * @return mixed
-     */
-    public function getRawData()
+    public function getRawData(): array
     {
         return $this->rawData;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getTimestamp()
+    public function getTimestamp(): ?int
     {
         return $this->timestamp;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getWebhookEvent()
+    public function getWebhookEvent(): string
     {
         return $this->webhookEvent;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getIssueEvent()
+    public function getIssueEvent(): ?string
     {
         return $this->issueEvent;
     }
 
-    /**
-     * @return mixed
-     */
-    /*public function getIssueEventDescription()
-    {
-        return $this->issueEventDescription;
-    }*/
-
-    /**
-     * @return mixed
-     */
-    public function getUser()
+    public function getUser(): ?JiraUser
     {
         return $this->user;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getIssue()
+    public function getIssue(): ?JiraIssue
     {
         return $this->issue;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getChangelog()
+    public function getChangelog(): ?JiraChangelog
     {
         return $this->changelog;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getWorklog()
+    public function getWorklog(): ?JiraWorklog
     {
         return $this->workLog;
     }
