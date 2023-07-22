@@ -1,4 +1,9 @@
 <?php
+
+namespace JiraWebhook\Models;
+
+use JiraWebhook\Exceptions\JiraWebhookDataException;
+
 /**
  * Class that parses JIRA user data and gives access to it.
  *
@@ -8,78 +13,54 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace JiraWebhook\Models;
-
-use JiraWebhook\Exceptions\JiraWebhookDataException;
-
 class JiraUser
 {
     /**
      * JIRA user self URL
-     * 
-     * @var
      */
-    protected $self;
+    protected ?string $self;
 
     /**
-     * JIRA user name
-     * 
-     * @var
+     * JIRA username
      */
-    protected $name;
+    protected string $name;
 
     /**
      * JIRA user key
-     *
-     * @var
      */
-    protected $key;
+    protected ?string $key;
 
     /**
      * JIRA user email
-     *
-     * @var
      */
-    protected $email;
+    protected ?string $email;
 
     /**
      * Array of JIRA user avatars
-     *
-     * @var
      */
-    protected $avatarURLs;
+    protected array $avatarURLs = [];
 
     /**
-     * JIRA user displayed name
-     *
-     * @var
+     * JIRA user display name
      */
-    protected $displayName;
+    protected ?string $displayName;
 
     /**
      * JIRA user active
-     * 
-     * @var
      */
-    protected $active;
+    protected ?bool $active;
 
     /**
      * JIRA user time zone
-     *
-     * @var
      */
-    protected $timeZone;
+    protected ?string $timeZone;
 
     /**
-     * Parsing JIRA user $data
-     * 
-     * @param null $data
-     * 
-     * @return JiraUser
-     * 
+     * Parsing JIRA user data
+     *
      * @throws JiraWebhookDataException
      */
-    public static function parse($data = null)
+    public static function parse(array $data = null): self
     {
         $userData = new self;
 
@@ -89,15 +70,14 @@ class JiraUser
 
         $userData->validate($data);
 
-        $userData->setSelf($data['self']);
-        $userName = empty($data['name']) && !empty($data['displayName']) ? $data['displayName'] : $data['name'];
-        $userData->setName($userName);
-        $userData->setKey($data['key']);
-        $userData->setEmail($data['emailAddress']);
-        $userData->setAvatarURLs($data['avatarUrls']);
-        $userData->setDisplayName($data['displayName']);
-        $userData->setActive($data['active']);
-        $userData->setTimeZone($data['timeZone']);
+        $userData->setSelf($data['self'] ?? null);
+        $userData->setName($data['name'] ?? $data['displayName']); // Checked in validate()
+        $userData->setKey($data['key'] ?? null);
+        $userData->setEmail($data['emailAddress'] ?? null);
+        $userData->setAvatarURLs($data['avatarUrls'] ?? []);
+        $userData->setDisplayName($data['displayName'] ?? null);
+        $userData->setActive($data['active'] ?? null);
+        $userData->setTimeZone($data['timeZone'] ?? null);
 
         return $userData;
     }
@@ -106,139 +86,91 @@ class JiraUser
      * @param $data
      * @throws JiraWebhookDataException
      */
-    public function validate($data)
+    public function validate($data): void
     {
         if (empty($data['name']) && empty($data['displayName'])) {
             throw new JiraWebhookDataException('JIRA issue user name does not exist!');
         }
     }
 
-    /**
-     * @param $self
-     */
-    public function setSelf($self)
+    public function setSelf(string $self = null): void
     {
         $this->self = $self;
     }
 
-    /**
-     * @param $name
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @param $key
-     */
-    public function setKey($key)
+    public function setKey(string $key = null): void
     {
         $this->key = $key;
     }
 
-    /**
-     * @param $email
-     */
-    public function setEmail($email)
+    public function setEmail(?string $email): void
     {
         $this->email = $email;
     }
 
-    /**
-     * @param $avatarURLs
-     */
-    public  function setAvatarURLs($avatarURLs)
+    public  function setAvatarURLs(array $avatarURLs): void
     {
         $this->avatarURLs = $avatarURLs;
     }
 
-    /**
-     * @param $displayName
-     */
-    public function setDisplayName($displayName)
+    public function setDisplayName(string $displayName = null): void
     {
         $this->displayName = $displayName;
     }
 
-    /**
-     * @param $active
-     */
-    public function setActive($active)
+    public function setActive(mixed $active): void
     {
-        $this->active = $active;
+        $this->active = $active === null ? null : (bool) $active;
     }
 
-    /**
-     * @param $timeZone
-     */
-    public function setTimeZone($timeZone)
+    public function setTimeZone(string $timeZone = null): void
     {
         $this->timeZone = $timeZone;
     }
 
     /**************************************************/
 
-    /**
-     * @return JiraUser
-     */
-    public function getSelf()
+    public function getSelf(): ?string
     {
         return $this->self;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
-    public function getKey()
+    public function getKey(): ?string
     {
         return $this->key;
     }
 
-    /**
-     * @return string
-     */
-    public function getEmail()
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    /**
-     * @return array
-     */
-    public  function getAvatarURLs()
+    public  function getAvatarURLs(): array
     {
         return $this->avatarURLs;
     }
 
-    /**
-     * @return string
-     */
-    public function getDisplayName()
+    public function getDisplayName(): ?string
     {
         return $this->displayName;
     }
 
-    /**
-     * @return boolean
-     */
-    public function getActive()
+    public function getActive(): ?bool
     {
         return $this->active;
     }
 
-    /**
-     * @return string
-     */
-    public function getTimeZone()
+    public function getTimeZone(): ?string
     {
         return $this->timeZone;
     }
