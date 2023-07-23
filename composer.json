@@ -5,7 +5,7 @@
     "homepage": "https://github.com/stichoza/jira-webhooks-data",
     "type": "library",
     "license": "Unlicense",
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require": {
         "php": "^8.2",
         "ext-mbstring": "*"
