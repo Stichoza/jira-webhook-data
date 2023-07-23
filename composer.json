@@ -1,8 +1,8 @@
 {
-    "name": "stichoza/jira-webhook-data",
+    "name": "stichoza/jira-webhooks-data",
     "description": "PHP classes for Atlassian Jira webhook data structures",
     "keywords": ["jira", "atlassian", "webhook", "reflection"],
-    "homepage": "https://github.com/stichoza/jira-webhook-data",
+    "homepage": "https://github.com/stichoza/jira-webhooks-data",
     "type": "library",
     "license": "Unlicense",
     "minimum-stability": "dev",
