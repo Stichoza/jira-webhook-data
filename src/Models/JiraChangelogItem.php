@@ -1,8 +1,8 @@
 <?php
 
-namespace JiraWebhookData\Models;
+namespace Stichoza\JiraWebhooksData\Models;
 
-use JiraWebhookData\Exceptions\JiraWebhookDataException;
+use Stichoza\JiraWebhooksData\Exceptions\JiraWebhookDataException;
 
 /**
  * Class that parses JIRA changelog item data and gives access to it.

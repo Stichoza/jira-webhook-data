@@ -1,8 +1,8 @@
 <?php
 
-namespace JiraWebhookData\Models;
+namespace Stichoza\JiraWebhooksData\Models;
 
-use JiraWebhookData\Exceptions\JiraWebhookDataException;
+use Stichoza\JiraWebhooksData\Exceptions\JiraWebhookDataException;
 
 /**
  * Class that parses JIRA webhook data and gives access to it.
@@ -20,7 +20,7 @@ class JiraChangelog
     /**
      * Array of changelog items
      *
-     * @var array<\JiraWebhookData\Models\JiraChangelogItem>
+     * @var array<\Stichoza\JiraWebhooksData\Models\JiraChangelogItem>
      */
     protected array $items = [];
 
@@ -100,7 +100,7 @@ class JiraChangelog
     }
 
     /**
-     * @return array<\JiraWebhookData\Models\JiraChangelogItem>
+     * @return array<\Stichoza\JiraWebhooksData\Models\JiraChangelogItem>
      */
     public function getItems(): array
     {

@@ -16,12 +16,12 @@
     },
     "autoload": {
         "psr-4": {
-            "JiraWebhookData\\": "src"
+            "Stichoza\\JiraWebhooksData\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "JiraWebhookData\\Tests\\": "tests"
+            "Stichoza\\JiraWebhooksData\\Tests\\": "tests"
         }
     }
 }

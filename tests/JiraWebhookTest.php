@@ -8,13 +8,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace JiraWebhookData\Tests;
+namespace Stichoza\JiraWebhooksData\Tests;
 
-use \JiraWebhookData\JiraWebhook;
 use PHPUnit_Framework_TestCase;
-use JiraWebhook\Models\JiraWebhookData;
-use \JiraWebhookData\Exceptions\JiraWebhookException;
-use JiraWebhook\Tests\Factories\JiraWebhookPayloadFactory;
+use Stichoza\JiraWebhooksData\JiraWebhook;
+use Stichoza\JiraWebhooksData\Models\JiraWebhookData;
+use Stichoza\JiraWebhooksData\Exceptions\JiraWebhookException;
+use Stichoza\JiraWebhooksData\Tests\Factories\JiraWebhookPayloadFactory;
 
 class JiraWebhookTest extends PHPUnit_Framework_TestCase
 {

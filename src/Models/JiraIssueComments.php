@@ -1,8 +1,8 @@
 <?php
 
-namespace JiraWebhookData\Models;
+namespace Stichoza\JiraWebhooksData\Models;
 
-use JiraWebhookData\Exceptions\JiraWebhookDataException;
+use Stichoza\JiraWebhooksData\Exceptions\JiraWebhookDataException;
 
 /**
  * Class that parses JIRA issue comments data and gives access to it.
@@ -15,7 +15,7 @@ class JiraIssueComments
     /**
      * Contains array of comments
      *
-     * @var array<\JiraWebhookData\Models\JiraIssueComment>
+     * @var array<\Stichoza\JiraWebhooksData\Models\JiraIssueComment>
      */
     protected array $comments = [];
 
@@ -92,7 +92,7 @@ class JiraIssueComments
     /**************************************************/
 
     /**
-     * @return array<\JiraWebhookData\Models\JiraIssueComment>
+     * @return array<\Stichoza\JiraWebhooksData\Models\JiraIssueComment>
      */
     public function getComments(): array
     {

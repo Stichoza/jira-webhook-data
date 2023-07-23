@@ -8,11 +8,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace JiraWebhookData\Tests;
+namespace Stichoza\JiraWebhooksData\Tests;
 
-use JiraWebhook\Models\JiraIssueComments;
 use PHPUnit_Framework_TestCase;
-use JiraWebhook\Tests\Factories\JiraWebhookPayloadFactory;
+use Stichoza\JiraWebhooksData\Models\JiraIssueComments;
+use Stichoza\JiraWebhooksData\Tests\Factories\JiraWebhookPayloadFactory;
 
 /**
  * @property  array issueCommentsData

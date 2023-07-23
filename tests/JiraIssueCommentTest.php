@@ -8,13 +8,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace JiraWebhookData\Tests;
+namespace Stichoza\JiraWebhooksData\Tests;
 
 use PHPUnit_Framework_TestCase;
-use JiraWebhook\Models\JiraUser;
-use JiraWebhook\Models\JiraIssueComment;
-use JiraWebhook\Exceptions\JiraWebhookDataException;
-use JiraWebhook\Tests\Factories\JiraWebhookPayloadFactory;
+use Stichoza\JiraWebhooksData\Models\JiraUser;
+use Stichoza\JiraWebhooksData\Models\JiraIssueComment;
+use Stichoza\JiraWebhooksData\Exceptions\JiraWebhookDataException;
+use Stichoza\JiraWebhooksData\Tests\Factories\JiraWebhookPayloadFactory;
 
 /**
  * @property  array issueCommentData

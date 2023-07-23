@@ -16,7 +16,7 @@ composer require stichoza/jira-webhook-data
 
 ```php
 
-use JiraWebhookData\Models\JiraWebhookData;
+use Stichoza\JiraWebhooksData\Models\JiraWebhookData;
 
 $data = [
     // JIRA webhook data

@@ -1,8 +1,8 @@
 <?php
 
-namespace JiraWebhookData\Models;
+namespace Stichoza\JiraWebhooksData\Models;
 
-use JiraWebhookData\Exceptions\JiraWebhookDataException;
+use Stichoza\JiraWebhooksData\Exceptions\JiraWebhookDataException;
 
 /**
  * Class that parses JIRA issue single comment data and gives access to it.
