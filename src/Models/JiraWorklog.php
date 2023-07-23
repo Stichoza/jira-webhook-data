@@ -5,13 +5,10 @@ namespace JiraWebhookData\Models;
 use JiraWebhookData\Exceptions\JiraWebhookDataException;
 
 /**
- * Class that parses JIRA worklog data and gives access to it.
+ * Class that parses JIRA webhook data and gives access to it.
  *
- * @credits https://github.com/kommuna
- * @author  Thomas Hery thery@doghouse.agency
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @author  Chewbacca <chewbacca@devadmin.com>
+ * @author  Stichoza <me@stichoza.com>
  */
 class JiraWorklog
 {
