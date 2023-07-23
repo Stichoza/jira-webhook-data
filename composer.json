@@ -2,7 +2,7 @@
     "name": "kommuna/jirawebhook",
     "description": "PHP classes for Atlassian Jira webhook data structure with events",
     "keywords": ["jira", "atlassian", "webhook", "reflection"],
-    "homepage": "https://github.com/kommuna/jirawebhook",
+    "homepage": "https://github.com/stichoza/jira-webhook-data",
     "type": "library",
     "license": "Unlicense",
     "minimum-stability": "dev",
@@ -16,11 +16,12 @@
     },
     "autoload": {
         "psr-4": {
-            "JiraWebhookDataStructures\\": "src"}
+            "JiraWebhookData\\": "src"
+        }
     },
     "autoload-dev": {
         "psr-4": {
-            "JiraWebhook\\Tests\\": "tests"
+            "JiraWebhookData\\Tests\\": "tests"
         }
     }
 }

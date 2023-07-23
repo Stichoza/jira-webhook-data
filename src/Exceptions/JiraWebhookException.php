@@ -1,6 +1,6 @@
 <?php
 
-namespace JiraWebhookDataStructures\Exceptions;
+namespace JiraWebhookData\Exceptions;
 
 use Exception;
 

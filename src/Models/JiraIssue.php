@@ -1,8 +1,8 @@
 <?php
 
-namespace JiraWebhookDataStructures\Models;
+namespace JiraWebhookData\Models;
 
-use JiraWebhookDataStructures\Exceptions\JiraWebhookDataException;
+use JiraWebhookData\Exceptions\JiraWebhookDataException;
 
 /**
  * Class that parses JIRA issue data and gives access to it.

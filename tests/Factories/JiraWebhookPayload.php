@@ -6,7 +6,7 @@
  * Time: 14:55
  */
 
-namespace JiraWebhook\Tests\Factories;
+namespace JiraWebhookData\Tests\Factories;
 
 use Faker\Factory;
 use Faker\Provider\Internet;
