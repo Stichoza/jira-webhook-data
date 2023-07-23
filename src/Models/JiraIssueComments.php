@@ -15,7 +15,7 @@ class JiraIssueComments
     /**
      * Contains array of comments
      *
-     * @var array<\JiraWebhook\Models\JiraIssueComment>
+     * @var array<\JiraWebhookData\Models\JiraIssueComment>
      */
     protected array $comments = [];
 
@@ -92,7 +92,7 @@ class JiraIssueComments
     /**************************************************/
 
     /**
-     * @return array<\JiraWebhook\Models\JiraIssueComment>
+     * @return array<\JiraWebhookData\Models\JiraIssueComment>
      */
     public function getComments(): array
     {

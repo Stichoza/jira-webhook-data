@@ -65,7 +65,7 @@ class JiraWorklog
     /**
      * Parsing JIRA worklog data
      *
-     * @throws \JiraWebhook\Exceptions\JiraWebhookDataException
+     * @throws JiraWebhookDataException
      */
     public static function parse(array $data = null): self
     {

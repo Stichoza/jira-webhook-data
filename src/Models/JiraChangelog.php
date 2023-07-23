@@ -20,14 +20,14 @@ class JiraChangelog
     /**
      * Array of changelog items
      *
-     * @var array<\JiraWebhook\Models\JiraChangelogItem>
+     * @var array<\JiraWebhookData\Models\JiraChangelogItem>
      */
     protected array $items = [];
 
     /**
      * Parsing JIRA changelog data
      *
-     * @throws \JiraWebhook\Exceptions\JiraWebhookDataException
+     * @throws JiraWebhookDataException
      */
     public static function parse(array $data = null): self
     {
@@ -100,7 +100,7 @@ class JiraChangelog
     }
 
     /**
-     * @return array<\JiraWebhook\Models\JiraChangelogItem>
+     * @return array<\JiraWebhookData\Models\JiraChangelogItem>
      */
     public function getItems(): array
     {

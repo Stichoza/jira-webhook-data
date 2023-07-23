@@ -72,9 +72,6 @@ class JiraIssue
      */
     protected ?string $summary;
 
-    /**
-     * JiraWebhook\Models\JiraIssueComments
-     */
     protected JiraIssueComments $issueComments;
 
     /**
