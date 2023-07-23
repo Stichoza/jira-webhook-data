@@ -1,4 +1,9 @@
 <?php
+
+namespace JiraWebhook\Models;
+
+use JiraWebhook\Exceptions\JiraWebhookDataException;
+
 /**
  * Class that parses JIRA issue data and gives access to it.
  *
@@ -8,127 +13,84 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace JiraWebhook\Models;
-
-use JiraWebhook\Exceptions\JiraWebhookDataException;
-
 class JiraIssue
 {
     /**
      * JIRA issue id
-     *
-     * @var
      */
-    protected $id;
+    protected int $id;
 
     /**
      * JIRA issue self URL
-     *
-     * @var
      */
-    protected $self;
+    protected string $self;
 
     /**
      * JIRA issue key
-     *
-     * @var
      */
-    protected $key;
+    protected string $key;
 
     /**
      * JIRA issue url
-     *
-     * @var
      */
-    protected $url;
+    protected ?string $url;
 
     /**
      * JIRA issue type name
-     *
-     * @var
      */
-    protected $issueTypeName;
+    protected string $issueTypeName;
 
     /**
      * JIRA issue project key
-     *
-     * @var
      */
-    protected $projectKey;
+    protected ?string $projectKey;
 
     /**
      * JIRA issue project name
-     *
-     * @var
      */
-    protected $projectName;
+    protected ?string $projectName;
 
     /**
      * JIRA issue priority
-     *
-     * @var
      */
-    protected $priorityName;
+    protected string $priorityName;
 
     /**
      * Array of JIRA issue labels
-     *
-     * @var
      */
-    protected $labels;
-
-    /**
-     * JIRA issue colour, based on priority
-     *
-     * @var
-     */
-    //protected $colour;
+    protected array $labels = [];
 
     /**
      * JiraWebhook\Models\JiraUser
-     *
-     * @var
      */
-    protected $assignee;
+    protected ?JiraUser $assignee;
 
     /**
      * JIRA issue status
-     *
-     * @var
      */
-    protected $statusName;
+    protected ?string $statusName;
 
     /**
      * JIRA issue summary
-     *
-     * @var
      */
-    protected $summary;
+    protected ?string $summary;
 
     /**
      * JiraWebhook\Models\JiraIssueComments
-     *
-     * @var
      */
-    protected $issueComments;
+    protected JiraIssueComments $issueComments;
 
-  /**
-   * All Jira issue fields
-   *
-   * @var array
-   */
-    protected $fields;
+    /**
+     * All Jira issue fields
+     */
+    protected array $fields = [];
 
     /**
      * Parsing JIRA issue $data
      *
-     * @param null $data
-     *
-     * @return JiraIssue
-     *
      * @throws JiraWebhookDataException
      */
-    public static function parse($data = null)
+    public static function parse(array $data = null): self
     {
         $issueData = new self;
 
@@ -141,29 +103,27 @@ class JiraIssue
         $issueFields = $data['fields'];
         $issueData->setFields($issueFields);
 
-        $issueData->setID($data['id']);
+        $issueData->setId((int) $data['id']);
         $issueData->setSelf($data['self']);
         $issueData->setKey($data['key']);
         $issueData->setUrl($data['key'], $data['self']);
         $issueData->setIssueTypeName($issueFields['issuetype']['name']);
-        $issueData->setProjectKey($issueFields['project']['key']);
-        $issueData->setProjectName($issueFields['project']['name']);
+        $issueData->setProjectKey($issueFields['project']['key'] ?? null);
+        $issueData->setProjectName($issueFields['project']['name'] ?? null);
         $issueData->setPriorityName($issueFields['priority']['name']);
-        //$issueData->setColour($issueFields['priority']['name']);
-        $issueData->setLabels($issueFields['labels']);
-        $issueData->setAssignee(JiraUser::parse($issueFields['assignee']));
-        $issueData->setStatusName($issueFields['status']['name']);
-        $issueData->setSummary($issueFields['summary']);
-        $issueData->setIssueComments(JiraIssueComments::parse($data['fields']['comment']));
+        $issueData->setLabels($issueFields['labels'] ?? []);
+        $issueData->setAssignee(empty($issueFields['assignee']) ? null : JiraUser::parse($issueFields['assignee']));
+        $issueData->setStatusName($issueFields['status']['name'] ?? null);
+        $issueData->setSummary($issueFields['summary'] ?? null);
+        $issueData->setIssueComments(JiraIssueComments::parse($data['fields']['comment'] ?? []));
 
         return $issueData;
     }
 
     /**
-     * @param $data
      * @throws JiraWebhookDataException
      */
-    public function validate($data)
+    public function validate(array $data): void
     {
         if (empty($data['id'])) {
             throw new JiraWebhookDataException('JIRA issue id does not exist!');
@@ -192,336 +152,212 @@ class JiraIssue
 
     /**
      * Check JIRA issue priority is Blocker
-     *
-     * @return bool
      */
-    public function isPriorityBlocker()
+    public function isPriorityBlocker(): bool
     {
-        return $this->getPriorityName() === 'Blocker';
+        return strtolower($this->getPriorityName()) === 'blocker';
     }
 
     /**
      * Check JIRA issue type is Operations
-     *
-     * @return bool
      */
-    public function isTypeOperations()
+    public function isTypeOperations(): bool
     {
-        return strpos($this->getIssueTypeName(), 'Operations') !== false;
+        return str_contains(strtolower($this->getIssueTypeName()), 'operations');
     }
 
     /**
      * Check JIRA issue type is Urgent bug
-     *
-     * @return bool
      */
-    public function isTypeUrgentBug()
+    public function isTypeUrgentBug(): bool
     {
-        return strpos($this->getIssueTypeName(), 'Urgent Bug') !== false;
+        return str_contains(strtolower($this->getIssueTypeName()), 'urgent bug');
     }
 
     /**
      * Check JIRA issue type is Server
-     *
-     * @return bool
      */
-    public function isTypeServer()
+    public function isTypeServer(): bool
     {
-        return strpos($this->getIssueTypeName(), 'Server') !== false;
+        return str_contains(strtolower($this->getIssueTypeName()), 'server');
     }
 
     /**
      * Check JIRA issue status is Resolved
-     *
-     * @return bool
      */
-    public function isStatusResolved()
+    public function isStatusResolved(): bool
     {
         // This is cause in devadmin JIRA status 'Resolved' has japanese symbols
-        return strpos($this->getStatusName(), 'Resolved') !== false;
+        return str_contains(strtolower($this->getStatusName()), 'resolved');
     }
 
     /**
      * Check if JIRA issue status is Closed
-     *
-     * @return bool|int
      */
-    public function isStatusClosed()
+    public function isStatusClosed(): bool
     {
-        return $this->getStatusName() === 'Closed';
+        return strtolower($this->getStatusName()) === 'closed';
     }
 
     /**************************************************/
 
-    /**
-     * @param $id
-     */
-    public function setID($id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @param $self
-     */
-    public function setSelf($self)
+    public function setSelf(string $self): void
     {
         $this->self = $self;
     }
 
-    /**
-     * @param $key
-     */
-    public function setKey($key)
+    public function setKey(string $key): void
     {
         $this->key = $key;
     }
 
     /**
      * Sets the web based url of an issue
-     *
-     * @param $key
-     * @param $self
      */
-    public function setUrl($key, $self)
+    public function setUrl(string $key, string $self): void
     {
         $url = parse_url($self);
         $this->url = $url['scheme'] . '://' . $url['host'] . '/browse/' . $key;
     }
 
-    /**
-     * @param $issueTypeName
-     */
-    public function setIssueTypeName($issueTypeName)
+    public function setIssueTypeName(string $issueTypeName): void
     {
         $this->issueTypeName = $issueTypeName;
     }
 
-    /**
-     * @param $projectKey
-     */
-    public function setProjectKey($projectKey)
+    public function setProjectKey(?string $projectKey): void
     {
         $this->projectKey = $projectKey;
     }
 
-    /**
-     * @param $projectName
-     */
-    public function setProjectName($projectName)
+    public function setProjectName(?string $projectName): void
     {
         $this->projectName = $projectName;
     }
 
-    /**
-     * @param $priorityName
-     */
-    public function setPriorityName($priorityName)
+    public function setPriorityName(string $priorityName): void
     {
         $this->priorityName = $priorityName;
     }
 
-    /**
-     * @param $labels
-     */
-    public function setLabels($labels)
+    public function setLabels(array $labels): void
     {
         $this->labels = $labels;
     }
 
-    /**
-     * @param $priority
-     */
-    /*public function setColour($priority)
-    {
-        // These are the same colors used for priority indicators in Jira
-        $priority_colors = [
-            'Blocker' => '#d40100',
-            'Highest' => '#ce0000',
-            'High' => '#ea4444',
-            'Medium' => '#ea7d24',
-            'Low' => '#2a8735',
-            'Lowest' => '#55a557'
-        ];
-        $this->colour = isset($priority_colors[$priority]) ? $priority_colors[$priority]: '#007AB8';
-    }*/
-
-    /**
-     * @param $assignee
-     */
-    public function setAssignee($assignee)
+    public function setAssignee(?JiraUser $assignee): void
     {
         $this->assignee = $assignee;
     }
 
-    /**
-     * @param $statusName
-     */
-    public function setStatusName($statusName)
+    public function setStatusName(?string $statusName): void
     {
         $this->statusName = $statusName;
     }
 
-    /**
-     * @param $summary
-     */
-    public function setSummary($summary)
+    public function setSummary(?string $summary): void
     {
         $this->summary = $summary;
     }
 
     /**
      * Set parsed JIRA issue comments data
-     *
-     * @param $issueComments
      */
-    public function setIssueComments($issueComments)
+    public function setIssueComments(JiraIssueComments $issueComments): void
     {
         $this->issueComments = $issueComments;
     }
 
     /**
      * Sets all issue fields to access extra info.
-     *
-     * @param array $fields
      */
-    public function setFields($fields)
+    public function setFields(array $fields): void
     {
       $this->fields = $fields;
     }
 
     /**************************************************/
 
-    /**
-     * @return mixed
-     */
-    public function getID()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getSelf()
+    public function getSelf(): string
     {
         return $this->self;
     }
 
-    /**
-     * @return string
-     */
-    public function getKey()
+    public function getKey(): ?string
     {
         return $this->key;
     }
 
     /**
      * Returns the key with a $modifier instead of a hyphen
-     *
-     * @param $modifier
-     *
-     * @return mixed
      */
-    public function getModifiedKey($modifier = " ")
+    public function getModifiedKey(string $modifier = ' '): string
     {
-        return str_replace("-", $modifier, $this->key);
+        return str_replace('-', $modifier, $this->key);
     }
 
-    /**
-     * @return string
-     */
-    public function getUrl()
+    public function getUrl(): string
     {
         return $this->url;
     }
 
-    /**
-     * @return string
-     */
-    public function getIssueTypeName()
+    public function getIssueTypeName(): string
     {
         return $this->issueTypeName;
     }
 
-    /**
-     * @return string
-     */
-    public function getProjectKey()
+    public function getProjectKey(): ?string
     {
         return $this->projectKey;
     }
 
-    /**
-     * @return string
-     */
-    public function getProjectName()
+    public function getProjectName(): ?string
     {
         return $this->projectName;
     }
 
-    /**
-     * @return string
-     */
-    public function getPriorityName()
+    public function getPriorityName(): string
     {
         return $this->priorityName;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getLabels()
+    public function getLabels(): array
     {
         return $this->labels;
     }
 
-    /**
-     * @return string
-     */
-    /*public function getColour()
-    {
-        return $this->colour;
-    }*/
-
-    /**
-     * @return JiraUser
-     */
-    public function getAssignee()
+    public function getAssignee(): ?JiraUser
     {
         return $this->assignee;
     }
 
-    /**
-     * @return string
-     */
-    public function getStatusName()
+    public function getStatusName(): ?string
     {
         return $this->statusName;
     }
 
-    /**
-     * @return string
-     */
-    public function getSummary()
+    public function getSummary(): ?string
     {
         return $this->summary;
     }
 
-    /**
-     * @return JiraIssueComments
-     */
-    public function getIssueComments()
+    public function getIssueComments(): JiraIssueComments
     {
         return $this->issueComments;
     }
 
-    /**
-     * @return array
-     */
-    public function getFields()
+    public function getFields(): array
     {
       return $this->fields;
     }
-
 }

@@ -1,4 +1,9 @@
 <?php
+
+namespace JiraWebhook\Models;
+
+use JiraWebhook\Exceptions\JiraWebhookDataException;
+
 /**
  * Class that parses JIRA worklog data and gives access to it.
  *
@@ -8,90 +13,64 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace JiraWebhook\Models;
-
-use JiraWebhook\Exceptions\JiraWebhookDataException;
-
 class JiraWorklog
 {
     /**
      * JIRA worklog id
-     *
-     * @var string
      */
-    protected $id;
+    protected int $id;
 
     /**
      * JIRA worklog self URL
-     *
-     * @var
      */
-    protected $self;
+    protected ?string $self;
 
     /**
      * JIRA worklog issue id
-     *
-     * @var string
      */
-    protected $issueId;
+    protected int $issueId;
 
     /**
      * JIRA issue matching worklog
-     *
-     * @var JiraIssue
      */
-    protected $issue;
+    protected ?JiraIssue $issue;
 
     /**
      * JIRA worklog author
-     *
-     * @var JiraUser
      */
-    protected $author;
+    protected JiraUser $author;
 
     /**
      * JIRA worklog time spent in seconds
-     *
-     * @var int
      */
-    protected $timeSpentSeconds;
+    protected int $timeSpentSeconds;
 
     /**
      * JIRA worklog comment
-     *
-     * @var string
      */
-    protected $comment;
+    protected ?string $comment;
 
     /**
      * JIRA worklog created date time
-     *
-     * @var string
      */
-    protected $created;
+    protected ?string $created;
 
     /**
      * JIRA worklog updated date time
-     *
-     * @var string
      */
-    protected $updated;
+    protected ?string $updated;
 
     /**
      * JIRA worklog started date time
-     *
-     * @var string
      */
-    protected $started;
+    protected ?string $started;
 
     /**
      * Parsing JIRA worklog data
      *
-     * @param null $data
-     *
-     * @return JiraWorklog
+     * @throws \JiraWebhook\Exceptions\JiraWebhookDataException
      */
-    public static function parse($data = null)
+    public static function parse(array $data = null): self
     {
         $worklogData = new self;
 
@@ -101,17 +80,16 @@ class JiraWorklog
 
         $worklogData->validate($data);
 
-        $worklogData->setId($data['id']);
-        $worklogData->setSelf($data['self']);
-        $worklogData->setIssueId($data['issueId']);
+        $worklogData->setId((int) $data['id']);
+        $worklogData->setSelf($data['self'] ?? null);
+        $worklogData->setIssueId((int) $data['issueId']);
         $worklogData->setAuthor(JiraUser::parse($data['author']));
-        $worklogData->setTimeSpentSeconds($data['timeSpentSeconds']);
+        $worklogData->setTimeSpentSeconds((int) $data['timeSpentSeconds']);
 
-        $worklogData->setComment($data['comment']);
-        $worklogData->setCreatedDate($data['created']);
-        $worklogData->setUpdatedDate($data['updated']);
-        $worklogData->setStartedDate($data['started']);
-
+        $worklogData->setComment($data['comment'] ?? null);
+        $worklogData->setCreatedDate($data['created'] ?? null);
+        $worklogData->setUpdatedDate($data['updated'] ?? null);
+        $worklogData->setStartedDate($data['started'] ?? null);
 
         return $worklogData;
     }
@@ -119,10 +97,9 @@ class JiraWorklog
     /**
      * Validates if the necessary parameters have been provided
      *
-     * @param $data
      * @throws JiraWebhookDataException
      */
-    public function validate($data)
+    public function validate($data): void
     {
         if (empty($data['id'])) {
             throw new JiraWebhookDataException('JIRA worklog issue id does not exist!');
@@ -138,167 +115,111 @@ class JiraWorklog
         }
     }
 
-    /**
-     * @param $id
-     */
-    public function setId($id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @param $self
-     */
-    public function setSelf($self)
+    public function setSelf(?string $self): void
     {
         $this->self = $self;
     }
 
-    /**
-     * @param $issueId
-     */
-    public function setIssueId($issueId)
+    public function setIssueId(int $issueId): void
     {
         $this->issueId = $issueId;
     }
 
-    /**
-     * @param $author
-     */
-    public function setAuthor($author)
+    public function setAuthor(JiraUser $author): void
     {
         $this->author = $author;
     }
 
-    /**
-     * @param $comment
-     */
-    public function setComment($comment)
+    public function setComment(?string $comment): void
     {
         $this->comment = $comment;
     }
 
-    /**
-     * @param $created
-     */
-    public function setCreatedDate($created)
+    public function setCreatedDate(?string $created): void
     {
         $this->created = $created;
     }
 
-    /**
-     * @param $created
-     */
-    public function setUpdatedDate($updated)
+    public function setUpdatedDate(?string $updated): void
     {
         $this->updated = $updated;
     }
 
-    /**
-     * @param $created
-     */
-    public function setStartedDate($started)
+    public function setStartedDate(?string $started): void
     {
         $this->started = $started;
     }
 
-    /**
-     * @param $timeSpentSeconds
-     */
-    public function setTimeSpentSeconds($timeSpentSeconds) {
+    public function setTimeSpentSeconds(int $timeSpentSeconds): void
+    {
         $this->timeSpentSeconds = $timeSpentSeconds;
     }
 
   /**
    * Assigns JiraIssue from raw API data.
    *
-   * @param array $data
-   *   Raw Jira issue data retrieved from API.
+   * @param array $data Raw Jira issue data retrieved from API.
    *
    * @throws JiraWebhookDataException
    */
-    public function setIssueFromData($data) {
+    public function setIssueFromData(array $data): void
+    {
         $this->issue = JiraIssue::parse($data);
     }
 
     /**************************************************/
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getSelf()
+    public function getSelf(): ?string
     {
         return $this->self;
     }
 
-    /**
-     * @return string
-     */
-    public function getIssueId()
+    public function getIssueId(): int
     {
         return $this->issueId;
     }
 
-    /**
-     * @param JiraUser
-     */
-    public function getAuthor()
+    public function getAuthor(): JiraUser
     {
         return $this->author;
     }
 
-    /**
-     * @return string
-     */
-    public function getComment()
+    public function getComment(): ?string
     {
         return $this->comment;
     }
 
-    /**
-     * @return string
-     */
-    public function getCreatedDate()
+    public function getCreatedDate(): ?string
     {
         return $this->created;
     }
 
-    /**
-     * @return string
-     */
-    public function getUpdatedDate()
+    public function getUpdatedDate(): ?string
     {
         return $this->updated;
     }
 
-    /**
-     * @return string
-     */
-    public function getStartedDate()
+    public function getStartedDate(): ?string
     {
         return $this->started;
     }
 
-    /**
-     * @return int
-     */
-    public function gettimeSpentSeconds()
+    public function getTimeSpentSeconds(): int
     {
         return $this->timeSpentSeconds;
     }
 
-  /**
-   * @return JiraIssue
-   */
-    public function getIssue()
+    public function getIssue(): ?JiraIssue
     {
       return $this->issue;
     }

@@ -83,17 +83,16 @@ class JiraUser
     }
 
     /**
-     * @param $data
      * @throws JiraWebhookDataException
      */
-    public function validate($data): void
+    public function validate(array $data): void
     {
         if (empty($data['name']) && empty($data['displayName'])) {
             throw new JiraWebhookDataException('JIRA issue user name does not exist!');
         }
     }
 
-    public function setSelf(string $self = null): void
+    public function setSelf(?string $self): void
     {
         $this->self = $self;
     }
@@ -103,7 +102,7 @@ class JiraUser
         $this->name = $name;
     }
 
-    public function setKey(string $key = null): void
+    public function setKey(?string $key): void
     {
         $this->key = $key;
     }
@@ -113,22 +112,22 @@ class JiraUser
         $this->email = $email;
     }
 
-    public  function setAvatarURLs(array $avatarURLs): void
+    public function setAvatarURLs(array $avatarURLs): void
     {
         $this->avatarURLs = $avatarURLs;
     }
 
-    public function setDisplayName(string $displayName = null): void
+    public function setDisplayName(?string $displayName): void
     {
         $this->displayName = $displayName;
     }
 
-    public function setActive(mixed $active): void
+    public function setActive(?bool $active): void
     {
-        $this->active = $active === null ? null : (bool) $active;
+        $this->active = $active;
     }
 
-    public function setTimeZone(string $timeZone = null): void
+    public function setTimeZone(?string $timeZone): void
     {
         $this->timeZone = $timeZone;
     }

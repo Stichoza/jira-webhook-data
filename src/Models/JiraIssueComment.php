@@ -1,4 +1,9 @@
 <?php
+
+namespace JiraWebhook\Models;
+
+use JiraWebhook\Exceptions\JiraWebhookDataException;
+
 /**
  * Class that parses JIRA issue single comment data and gives access to it.
  *
@@ -8,73 +13,49 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace JiraWebhook\Models;
-
-use JiraWebhook\Exceptions\JiraWebhookDataException;
-
 class JiraIssueComment
 {
     /**
      * JIRA comment self url
-     *
-     * @var
      */
-    protected $self;
+    protected ?string $self;
 
     /**
      * JIRA comment ID
-     *
-     * @var
      */
-    protected $id;
+    protected int $id;
 
     /**
      * JIRA comment author
-     * JiraWebhook\Models\JiraUser
-     *
-     * @var
      */
-    protected $author;
+    protected JiraUser $author;
 
     /**
      * JIRA comment text
-     *
-     * @var
      */
-    protected $body;
+    protected string $body;
 
     /**
      * JIRA comment update author
-     * JiraWebhook\Models\JiraUser
-     *
-     * @var
      */
-    protected $updateAuthor;
+    protected JiraUser $updateAuthor;
 
     /**
      * JIRA comment create data time
-     *
-     * @var
      */
-    protected $created;
+    protected ?string $created;
 
     /**
      * JIRA comment update data time
-     *
-     * @var
      */
-    protected $updated;
+    protected ?string $updated;
 
     /**
      * Parsing JIRA issue comment $data
-     * 
-     * @param null $data
-     * 
-     * @return JiraIssueComment
-     * 
+     *
      * @throws JiraWebhookDataException
      */
-    public static function parse($data = null)
+    public static function parse(array $data = null): self
     {
         $commentData = new self;
 
@@ -84,13 +65,13 @@ class JiraIssueComment
 
         $commentData->validate($data);
 
-        $commentData->setSelf($data['self']);
-        $commentData->setId($data['id']);
+        $commentData->setSelf($data['self'] ?? null);
+        $commentData->setId((int) $data['id']);
         $commentData->setAuthor(JiraUser::parse($data['author']));
-        $commentData->setBody($data['body']);
+        $commentData->setBody($data['body'] ?? '');
         $commentData->setUpdateAuthor(JiraUser::parse($data['updateAuthor']));
-        $commentData->setCreated($data['created']);
-        $commentData->setUpdated($data['updated']);
+        $commentData->setCreated($data['created'] ?? null);
+        $commentData->setUpdated($data['updated'] ?? null);
 
         return $commentData;
     }
@@ -98,14 +79,22 @@ class JiraIssueComment
     /**
      * Validates if the necessary parameters have been provided
      *
-     * @param $data
      * @throws JiraWebhookDataException
      */
-    public function validate($data)
+    public function validate($data): void
     {
+        if (empty($data['id'])) {
+            throw new JiraWebhookDataException('JIRA issue comment id does not exist!');
+        }
+
         if (empty($data['author'])) {
             throw new JiraWebhookDataException('JIRA issue comment author does not exist!');
         }
+
+        if (empty($data['updateAuthor'])) {
+            throw new JiraWebhookDataException('JIRA issue comment update author does not exist!');
+        }
+
         if (empty($data['body'])) {
             throw new JiraWebhookDataException('JIRA issue comment body does not exist!');
         }
@@ -113,135 +102,90 @@ class JiraIssueComment
 
     /**
      * Get array of user nicknames that referenced in comment
-     *
-     * @return mixed
      */
-    public function getMentionedUsersNicknames()
+    public function getMentionedUsersNicknames(): array
     {
         preg_match_all("/\[~(.*?)\]/", $this->body, $matches);
+
         return $matches[1];
     }
 
     /**
      * Remove from comment body code and quote blocks
-     *
-     * @return mixed
      */
-    public function bodyParsing()
+    public function bodyParsing(): string
     {
-        return preg_replace("/\{code(.*?)\}(.*?)\{code\}|\{quote\}(.*?)\{quote\}/", "", $this->body);
+        return preg_replace("/\{code(.*?)\}(.*?)\{code\}|\{quote\}(.*?)\{quote\}/", '', $this->body);
     }
 
-    /**
-     * @param $self
-     */
-    public function setSelf($self)
+    public function setSelf(?string $self): void
     {
         $this->self = $self;
     }
 
-    /**
-     * @param $id
-     */
-    public function setId($id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @param $author
-     */
-    public function setAuthor($author)
+    public function setAuthor(JiraUser $author): void
     {
         $this->author = $author;
     }
 
-    /**
-     * @param $body
-     */
-    public function setBody($body)
+    public function setBody(string $body): void
     {
         $this->body = $body;
     }
 
-    /**
-     * @param $updateAuthor
-     */
-    public function setUpdateAuthor($updateAuthor)
+    public function setUpdateAuthor(JiraUser $updateAuthor): void
     {
         $this->updateAuthor = $updateAuthor;
     }
 
-    /**
-     * @param $created
-     */
-    public function setCreated($created)
+    public function setCreated(?string $created): void
     {
         $this->created = $created;
     }
 
-    /**
-     * @param $updated
-     */
-    public function setUpdated($updated)
+    public function setUpdated(?string $updated): void
     {
         $this->updated = $updated;
     }
 
     /**************************************************/
 
-    /**
-     * @return JiraIssueComment
-     */
-    public function getSelf()
+    public function getSelf(): ?string
     {
         return $this->self;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return JiraUser
-     */
-    public function getAuthor()
+    public function getAuthor(): JiraUser
     {
         return $this->author;
     }
 
-    /**
-     * @return string
-     */
-    public function getBody($start = 0, $length = null)
+    public function getBody(int $start = 0, int $length = null): string
     {
         return mb_substr($this->body, $start, $length);
     }
 
-    /**
-     * @return JiraUser
-     */
-    public function getUpdateAuthor()
+    public function getUpdateAuthor(): JiraUser
     {
         return $this->updateAuthor;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getCreated()
+    public function getCreated(): ?string
     {
         return $this->created;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getUpdated()
+    public function getUpdated(): ?string
     {
         return $this->updated;
     }

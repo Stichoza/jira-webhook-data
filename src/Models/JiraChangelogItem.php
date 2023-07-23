@@ -1,4 +1,9 @@
 <?php
+
+namespace JiraWebhook\Models;
+
+use JiraWebhook\Exceptions\JiraWebhookDataException;
+
 /**
  * Class that parses JIRA changelog item data and gives access to it.
  *
@@ -8,60 +13,44 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace JiraWebhook\Models;
-
 class JiraChangelogItem
 {
     /**
      * Issue field that has changed
-     *
-     * @var
      */
-    protected $field;
+    protected string $field;
 
     /**
      * Type of changed field
-     *
-     * @var
      */
-    protected $fieldType;
+    protected string $fieldType;
 
     /**
      * Old value of the field
-     *
-     * @var
      */
-    protected $from;
+    protected ?int $from;
 
     /**
      * Name of the field old value
-     *
-     * @var
      */
-    protected $fromString;
+    protected ?string $fromString;
 
     /**
      * New value of the field
-     *
-     * @var
      */
-    protected $to;
+    protected ?int $to;
 
     /**
      * Name of field new value
-     *
-     * @var
      */
-    protected $toString;
+    protected ?string $toString;
 
     /**
      * Parsing JIRA changelog item data
      *
-     * @param null $data
-     *
-     * @return JiraChangelogItem
+     * @throws \JiraWebhook\Exceptions\JiraWebhookDataException
      */
-    public static function parse($data = null)
+    public static function parse(array $data = null): self
     {
         $changelogItemData = new self;
 
@@ -69,110 +58,90 @@ class JiraChangelogItem
             return $changelogItemData;
         }
 
+        $changelogItemData->validate($data);
+
         $changelogItemData->setField($data['field']);
         $changelogItemData->setFieldType($data['fieldtype']);
-        $changelogItemData->setFrom($data['from']);
-        $changelogItemData->setFromString($data['fromString']);
-        $changelogItemData->setTo($data['to']);
-        $changelogItemData->setToString($data['toString']);
+        $changelogItemData->setFrom($data['from'] ?? null);
+        $changelogItemData->setFromString($data['fromString'] ?? null);
+        $changelogItemData->setTo($data['to'] ?? null);
+        $changelogItemData->setToString($data['toString'] ?? null);
 
         return $changelogItemData;
     }
 
     /**
-     * @param $field
+     * @throws JiraWebhookDataException
      */
-    public function setField($field)
+    public function validate(array $data): void
+    {
+        if (empty($data['field'])) {
+            throw new JiraWebhookDataException('JIRA changelog item fields does not exist!');
+        }
+
+        if (empty($data['fieldtype'])) {
+            throw new JiraWebhookDataException('JIRA changelog item fieldtype does not exist!');
+        }
+    }
+
+    public function setField(string $field): void
     {
         $this->field = $field;
     }
 
-    /**
-     * @param $fieldType
-     */
-    public function setFieldType($fieldType)
+    public function setFieldType(string $fieldType): void
     {
         $this->fieldType = $fieldType;
     }
 
-    /**
-     * @param $from
-     */
-    public function setFrom($from)
+    public function setFrom(?string $from): void
     {
         $this->from = $from;
     }
 
-    /**
-     * @param $fromString
-     */
-    public function setFromString($fromString)
+    public function setFromString(?string $fromString): void
     {
         $this->fromString = $fromString;
     }
 
-    /**
-     * @param $to
-     */
-    public function setTo($to)
+    public function setTo(?string $to): void
     {
         $this->to = $to;
     }
 
-    /**
-     * @param $toString
-     */
-    public function setToString($toString)
+    public function setToString(?string $toString): void
     {
         $this->toString = $toString;
     }
 
     /**************************************************/
 
-    /**
-     * @return mixed
-     */
-    public function getField()
+    public function getField(): string
     {
         return $this->field;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getFieldType()
+    public function getFieldType(): string
     {
         return $this->fieldType;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getFrom()
+    public function getFrom(): ?int
     {
         return $this->from;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getFromString()
+    public function getFromString(): ?string
     {
         return $this->fromString;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getTo()
+    public function getTo(): ?int
     {
         return $this->to;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getToString()
+    public function getToString(): ?string
     {
         return $this->toString;
     }

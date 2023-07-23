@@ -1,4 +1,9 @@
 <?php
+
+namespace JiraWebhook\Models;
+
+use JiraWebhook\Exceptions\JiraWebhookDataException;
+
 /**
  * Class that parses JIRA issue comments data and gives access to it.
  *
@@ -8,50 +13,36 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace JiraWebhook\Models;
-
-use JiraWebhook\Exceptions\JiraWebhookDataException;
-
 class JiraIssueComments
 {
     /**
-     * Contains array of JiraWebhook\Models\JiraIssueComment
-     * 
-     * @var array
+     * Contains array of comments
+     *
+     * @var array<\JiraWebhook\Models\JiraIssueComment>
      */
-    protected $comments = [];
+    protected array $comments = [];
 
     /**
      * JIRA comments max results
-     *
-     * @var
      */
-    protected $maxResults;
+    protected ?int $maxResults;
 
     /**
      * Total number of comments
-     *
-     * @var
      */
-    protected $total;
+    protected ?int $total;
 
     /**
      * JIRA comments start at
-     *
-     * @var
      */
-    protected $startAt;
+    protected ?int $startAt;
 
     /**
      * Parsing JIRA issue comments $data
      *
-     * @param null $data
-     *
-     * @return JiraIssueComments
-     *
      * @throws JiraWebhookDataException
      */
-    public static function parse($data = null)
+    public static function parse(array $data = null): self
     {
         $issueCommentsData = new self;
 
@@ -59,50 +50,44 @@ class JiraIssueComments
             return $issueCommentsData;
         }
 
-        foreach ($data['comments'] as $key => $comment) {
-            $issueCommentsData->setComment($key, JiraIssueComment::parse($comment));
+        foreach ($data['comments'] ?? [] as $comment) {
+            $issueCommentsData->pushComment(JiraIssueComment::parse($comment));
         }
 
-        $issueCommentsData->setMaxResults($data['maxResults']);
-        $issueCommentsData->setTotal($data['total']);
-        $issueCommentsData->setStartAt($data['startAt']);
+        $issueCommentsData->setMaxResults($data['maxResults'] ?? null);
+        $issueCommentsData->setTotal($data['total'] ?? null);
+        $issueCommentsData->setStartAt($data['startAt'] ?? null);
 
         return $issueCommentsData;
     }
 
     /**
-     * Set parsed single comment
-     *
-     * @param mixed            $key     array key
-     * @param JiraIssueComment $comment comment data
-     *
-     * @throws JiraWebhookDataException
+     * @deprecated
      */
-    public function setComment($key, $comment)
+    public function setComment(int $key, JiraIssueComment $comment): void
     {
         $this->comments[$key] = $comment;
     }
 
     /**
-     * @param $maxResults
+     * Push parsed single comment
      */
-    public function setMaxResults($maxResults)
+    public function pushComment(JiraIssueComment $comment): void
+    {
+        $this->comments[] = $comment;
+    }
+
+    public function setMaxResults(?int $maxResults): void
     {
         $this->maxResults = $maxResults;
     }
 
-    /**
-     * @param $total
-     */
-    public function setTotal($total)
+    public function setTotal(?int $total): void
     {
         $this->total = $total;
     }
 
-    /**
-     * @param $startAt
-     */
-    public function setStartAt($startAt)
+    public function setStartAt(?int $startAt): void
     {
         $this->startAt = $startAt;
     }
@@ -112,62 +97,47 @@ class JiraIssueComments
     /**
      * @return array<\JiraWebhook\Models\JiraIssueComment>
      */
-    public function getComments()
+    public function getComments(): array
     {
         return $this->comments;
     }
 
-    /**
-     * @return integer
-     */
-    public function getMaxResults()
+    public function getMaxResults(): ?int
     {
         return $this->maxResults;
     }
 
-    /**
-     * @return integer
-     */
-    public function getTotal()
+    public function getTotal(): ?int
     {
         return $this->total;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getStartAt()
+    public function getStartAt(): ?int
     {
         return $this->startAt;
     }
 
     /**
      * Get object of last comment
-     * 
-     * @return JiraIssueComment
      */
-    public function getLastComment()
+    public function getLastComment(): ?JiraIssueComment
     {
-        return end($this->comments);
+        return end($this->comments) ?: null;
     }
 
     /**
      * Get author name of last comment
-     * 
-     * @return string
      */
-    public function getLastCommenterName()
+    public function getLastCommenterName(): ?string
     {
-        return $this->getLastComment()->getAuthor()->getName();
+        return $this->getLastComment()?->getAuthor()->getName();
     }
 
     /**
      * Get body (text) of last comment
-     * 
-     * @return string
      */
-    public function getLastCommentBody()
+    public function getLastCommentBody(): ?string
     {
-        return $this->getLastComment()->getBody();
+        return $this->getLastComment()?->getBody();
     }
 }

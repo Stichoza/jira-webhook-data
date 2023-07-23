@@ -43,7 +43,7 @@ class JiraIssueTest extends PHPUnit_Framework_TestCase {
         $issue = JiraIssue::parse($this->issueData);
 
 
-        $this->assertEquals($this->issueData['id'], $issue->getID());
+        $this->assertEquals($this->issueData['id'], $issue->getId());
         $this->assertEquals($this->issueData['self'], $issue->getSelf());
         $this->assertEquals('https://testvicky.atlassian.net/browse/' . $issue->getKey(), $issue->getUrl());
         $this->assertEquals($this->issueData['key'], $issue->getKey());

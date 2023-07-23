@@ -1,4 +1,9 @@
 <?php
+
+namespace JiraWebhook\Exceptions;
+
+use Exception;
+
 /**
  * Exception class for JiraWebhookData.
  *
@@ -8,6 +13,4 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace JiraWebhook\Exceptions;
-
-class JiraWebhookDataException extends \Exception {}
+class JiraWebhookDataException extends Exception {}

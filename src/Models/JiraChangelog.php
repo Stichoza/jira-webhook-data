@@ -1,4 +1,9 @@
 <?php
+
+namespace JiraWebhook\Models;
+
+use JiraWebhook\Exceptions\JiraWebhookDataException;
+
 /**
  * Class that parses JIRA changelog data and gives access to it.
  *
@@ -8,33 +13,26 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace JiraWebhook\Models;
-
 class JiraChangelog
 {
     /**
      * JIRA changelog id
-     *
-     * @var
      */
-    protected $id;
+    protected int $id;
 
     /**
      * Array of changelog items
-     * JiraWebhook\Models\JiraChangelogItem
      *
-     * @var array
+     * @var array<\JiraWebhook\Models\JiraChangelogItem>
      */
-    protected $items = [];
+    protected array $items = [];
 
     /**
      * Parsing JIRA changelog data
      *
-     * @param null $data
-     *
-     * @return JiraChangelog
+     * @throws \JiraWebhook\Exceptions\JiraWebhookDataException
      */
-    public static function parse($data = null)
+    public static function parse(array $data = null): self
     {
         $changelogData = new self;
 
@@ -42,58 +40,64 @@ class JiraChangelog
             return $changelogData;
         }
 
-        $changelogData->setId($data['id']);
+        $changelogData->validate($data);
 
-        foreach ($data['items'] as $key => $item) {
-            $changelogData->setItem($key, JiraChangelogItem::parse($item));
+        $changelogData->setId((int) $data['id']);
+
+        foreach ($data['items'] ?? [] as $item) {
+            $changelogData->pushItem(JiraChangelogItem::parse($item));
         }
 
         return $changelogData;
     }
 
     /**
-     * Check if JIRA issue was assigned
-     *
-     * @return bool
+     * @throws JiraWebhookDataException
      */
-    public function isIssueAssigned()
+    public function validate(array $data): void
     {
-        $isAssigned = false;
+        if (empty($data['id'])) {
+            throw new JiraWebhookDataException('JIRA changelog id does not exist!');
+        }
+    }
 
+    /**
+     * Check if JIRA issue was assigned
+     */
+    public function isIssueAssigned(): bool
+    {
         foreach ($this->items as $item) {
-            if ($isAssigned = $item->getField() === 'assignee') {
-                break;
+            if ($item->getField() === 'assignee') {
+                return true;
             }
         }
 
-        return $isAssigned;
+        return false;
     }
 
     /**************************************************/
 
-    /**
-     * @param $id
-     */
-    public function setId($id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
 
     /**
-     * @param $key
-     * @param $item
+     * @deprecated
      */
-    public function setItem($key, $item)
+    public function setItem(int $key, JiraChangelogItem $item): void
     {
         $this->items[$key] = $item;
     }
 
+    public function pushItem(JiraChangelogItem $item): void
+    {
+        $this->items[] = $item;
+    }
+
     /**************************************************/
 
-    /**
-     * @return mixed
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -101,7 +105,7 @@ class JiraChangelog
     /**
      * @return array<\JiraWebhook\Models\JiraChangelogItem>
      */
-    public function getItems()
+    public function getItems(): array
     {
         return $this->items;
     }
