@@ -1,6 +1,6 @@
 {
-    "name": "kommuna/jirawebhook",
-    "description": "PHP classes for Atlassian Jira webhook data structure with events",
+    "name": "stichoza/jira-webhook-data",
+    "description": "PHP classes for Atlassian Jira webhook data structures",
     "keywords": ["jira", "atlassian", "webhook", "reflection"],
     "homepage": "https://github.com/stichoza/jira-webhook-data",
     "type": "library",
