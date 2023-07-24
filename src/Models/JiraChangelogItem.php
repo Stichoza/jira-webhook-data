@@ -10,7 +10,7 @@ use Stichoza\JiraWebhooksData\Exceptions\JiraWebhookDataException;
  * @author  Chewbacca <chewbacca@devadmin.com>
  * @author  Stichoza <me@stichoza.com>
  */
-class JiraChangelogItem
+class JiraChangelogItem extends AbstractModel
 {
     /**
      * Issue field that has changed

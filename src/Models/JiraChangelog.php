@@ -10,7 +10,7 @@ use Stichoza\JiraWebhooksData\Exceptions\JiraWebhookDataException;
  * @author  Chewbacca <chewbacca@devadmin.com>
  * @author  Stichoza <me@stichoza.com>
  */
-class JiraChangelog
+class JiraChangelog extends AbstractModel
 {
     /**
      * JIRA changelog id
