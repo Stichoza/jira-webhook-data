@@ -60,9 +60,9 @@ class JiraChangelogItem extends AbstractModel
 
             $this->field = $data['field'];
             $this->fieldType = $data['fieldtype'];
-            $this->from = $data['from'] ?? null;
+            $this->from = ((int) $data['from']) ?: null;
             $this->fromString = $data['fromString'] ?? null;
-            $this->to = $data['to'] ?? null;
+            $this->to = ((int) $data['to']) ?: null;
             $this->toString = $data['toString'] ?? null;
         }
     }
