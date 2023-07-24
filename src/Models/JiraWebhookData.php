@@ -27,6 +27,8 @@ class JiraWebhookData extends AbstractModel
 
     public ?JiraWorklog $worklog;
 
+    public ?JiraIssueComment $comment;
+
     /**
      * @var array Decoded raw data
      */
@@ -57,6 +59,7 @@ class JiraWebhookData extends AbstractModel
             $this->user = empty($data['user']) ? null : new JiraUser($data['user']);
             $this->issue = empty($data['issue']) ? null : new JiraIssue($data['issue']);
             $this->changelog = empty($data['changelog']) ? null : new JiraChangelog($data['changelog']);
+            $this->comment = empty($data['comment']) ? null : new JiraIssueComment($data['comment']);
             $this->worklog = empty($data['worklog']) ? null : new JiraWorklog($data['worklog']);
         }
     }
