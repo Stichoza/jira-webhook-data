@@ -91,10 +91,10 @@ class JiraWorklog
     public function validate($data): void
     {
         if (empty($data['id'])) {
-            throw new JiraWebhookDataException('JIRA worklog issue id does not exist!');
+            throw new JiraWebhookDataException('JIRA worklog id does not exist!');
         }
         if (empty($data['issueId'])) {
-            throw new JiraWebhookDataException('JIRA worklog id does not exist!');
+            throw new JiraWebhookDataException('JIRA worklog issue id does not exist!');
         }
         if (empty($data['author'])) {
             throw new JiraWebhookDataException('JIRA worklog author does not exist!');
