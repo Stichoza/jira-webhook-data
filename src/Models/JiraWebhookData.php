@@ -12,24 +12,25 @@ use Stichoza\JiraWebhooksData\Exceptions\JiraWebhookDataException;
  */
 class JiraWebhookData extends AbstractModel
 {
+
+    public int $timestamp;
+
+    public string $webhookEvent;
+
+    public ?string $issueEvent;
+
+    public ?JiraUser $user;
+
+    public ?JiraIssue $issue;
+
+    public ?JiraChangelog $changelog;
+
+    public ?JiraWorklog $worklog;
+
     /**
-     * Decoded raw data
+     * @var array Decoded raw data
      */
     protected array $rawData = [];
-
-    protected int $timestamp;
-
-    protected string $webhookEvent;
-
-    protected ?string $issueEvent;
-
-    protected ?JiraUser $user;
-
-    protected ?JiraIssue $issue;
-
-    protected ?JiraChangelog $changelog;
-
-    protected ?JiraWorklog $worklog;
 
     /**
      * @var array<string> Array of required keys in data
