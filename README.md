@@ -9,7 +9,7 @@ If you're looking for the **Laravel** package with events and routes, check out 
 
 > **Note:** This package was originally forked from [kommuna/jirawebhook](https://github.com/kommuna/jirawebhook) which is meant to be used with the [kommuna/vicky](https://github.com/kommuna/vicky) and has support of League events and message converters. This package, on the other hand, is a separate package because the whole structure is rewritten to the point that it's no longer compatible with the original repo. Kudos to the developers of the original package!
 
-# Installation
+## Installation
 
 Install this package with Composer:
 
