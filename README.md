@@ -1,6 +1,8 @@
 Jira Webhooks Data
 ==================
 
+[![Latest Stable Version](https://img.shields.io/packagist/v/Stichoza/jira-webhooks-data.svg)](https://packagist.org/packages/stichoza/jira-webhooks-data) [![Total Downloads](https://img.shields.io/packagist/dt/Stichoza/jira-webhooks-data.svg)](https://packagist.org/packages/stichoza/jira-webhooks-data) [![Downloads Month](https://img.shields.io/packagist/dm/Stichoza/jira-webhooks-data.svg)](https://packagist.org/packages/stichoza/jira-webhooks-data) [![Petreon donation](https://img.shields.io/badge/patreon-donate-orange.svg)](https://www.patreon.com/stichoza) [![PayPal donation](https://img.shields.io/badge/paypal-donate-blue.svg)](https://paypal.me/stichoza)
+
 This is PHP library for processing and handling Atlassian [Jira webhook](https://developer.atlassian.com/jiradev/jira-apis/webhooks) data.
 
 If you're looking for the **Laravel** package with events and routes, check out [stichoza/jira-webhooks-laravel](https://github.com/Stichoza/jira-webhooks-laravel) package that includes this package as data structures.
@@ -60,7 +62,7 @@ $changelog = $webhookData->changelog; // JiraChangelog instance
 $worklog = $webhookData->worklog; // JiraWorklog instance
 ```
 
-Access specific properties from the JiraIssue instance
+Access specific properties from the `JiraIssue` instance
 
 ```php
 $issueId = $issue->id;
@@ -69,7 +71,7 @@ $issueTypeName = $issue->issueTypeName;
 $priorityName = $issue->priorityName;
 ```
 
-Access specific properties from the JiraUser instance
+Access specific properties from the `JiraUser` instance
 
 ```php
 if ($user) {
@@ -79,7 +81,7 @@ if ($user) {
 }
 ```
 
-Access specific properties from the JiraChangelog instance
+Access specific properties from the `JiraChangelog` instance
 
 ```php
     $changelogId = $changelog->id;
