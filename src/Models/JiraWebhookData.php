@@ -65,6 +65,14 @@ class JiraWebhookData extends AbstractModel
     }
 
     /**
+     * @return array Raw data of webhook
+     */
+    public function getRawData(): array
+    {
+        return $this->rawData;
+    }
+
+    /**
      * Check if JIRA issue event is issue commented
      */
     public function isIssueCommented(): bool
