@@ -23,5 +23,11 @@
         "psr-4": {
             "Stichoza\\JiraWebhooksData\\Tests\\": "tests"
         }
-    }
+    },
+    "authors": [
+        {
+            "name": "Levan Velijanashvili",
+            "email": "me@stichoza.com"
+        }
+    ]
 }
