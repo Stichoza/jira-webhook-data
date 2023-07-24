@@ -11,7 +11,7 @@ If you're looking for the **Laravel** package with events and routes, check out 
 
 ## Installation
 
-Install this package with Composer:
+Install this package via Composer:
 
 ```
 composer require stichoza/jira-webhook-data
