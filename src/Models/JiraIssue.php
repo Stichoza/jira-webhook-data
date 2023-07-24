@@ -80,6 +80,18 @@ class JiraIssue extends AbstractModel
     public array $fields = [];
 
     /**
+     * @var array<string> Array of required keys in data
+     */
+    protected array $required = [
+        'id',
+        'self',
+        'key',
+        'fields',
+        'fields.issuetype.name',
+        'fields.priority.name',
+    ];
+
+    /**
      * @throws JiraWebhookDataException
      */
     public function __construct(array $data = null)
@@ -105,36 +117,6 @@ class JiraIssue extends AbstractModel
             $this->issueComments = new JiraIssueComments($data['fields']['comment'] ?? []);
 
             $this->setUrl($data['key'], $data['self']);
-        }
-    }
-
-    /**
-     * @throws JiraWebhookDataException
-     */
-    public function validate(array $data): void
-    {
-        if (empty($data['id'])) {
-            throw new JiraWebhookDataException('JIRA issue id does not exist!');
-        }
-
-        if (empty($data['self'])) {
-            throw new JiraWebhookDataException('JIRA issue self URL does not exist!');
-        }
-
-        if (empty($data['key'])) {
-            throw new JiraWebhookDataException('JIRA issue key does not exist!');
-        }
-
-        if (empty($data['fields'])) {
-            throw new JiraWebhookDataException('JIRA issue fields does not exist!');
-        }
-
-        if (empty($data['fields']['issuetype']['name'])) {
-            throw new JiraWebhookDataException('JIRA issue type does not exist!');
-        }
-
-        if (empty($data['fields']['priority']['name'])) {
-            throw new JiraWebhookDataException('JIRA issue priority does not exist!');
         }
     }
 

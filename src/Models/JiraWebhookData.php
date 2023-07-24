@@ -17,7 +17,7 @@ class JiraWebhookData extends AbstractModel
      */
     protected array $rawData = [];
 
-    protected ?int $timestamp;
+    protected int $timestamp;
 
     protected string $webhookEvent;
 
@@ -32,6 +32,14 @@ class JiraWebhookData extends AbstractModel
     protected ?JiraWorklog $worklog;
 
     /**
+     * @var array<string> Array of required keys in data
+     */
+    protected array $required = [
+        'timestamp',
+        'webhookEvent',
+    ];
+
+    /**
      * @throws JiraWebhookDataException
      */
     public function __construct(array $data = null)
@@ -40,33 +48,15 @@ class JiraWebhookData extends AbstractModel
             $this->validate($data);
 
             $this->rawData = $data;
-            $this->timestamp = $data['timestamp'];
+            $this->timestamp = (int) $data['timestamp'];
             $this->webhookEvent = $data['webhookEvent'];
-            $this->issueEvent = $data['issue_event_type_name'];
+            $this->issueEvent = $data['issue_event_type_name'] ?? null;
 
             // For worklogs, best to get the user from the author fields prior to calling this hook.
             $this->user = empty($data['user']) ? null : new JiraUser($data['user']);
             $this->issue = empty($data['issue']) ? null : new JiraIssue($data['issue']);
             $this->changelog = empty($data['changelog']) ? null : new JiraChangelog($data['changelog']);
             $this->worklog = empty($data['worklog']) ? null : new JiraWorklog($data['worklog']);
-        }
-    }
-
-    /**
-     * @throws JiraWebhookDataException
-     */
-    public function validate(array $data): void
-    {
-        if (empty($data['webhookEvent'])) {
-            throw new JiraWebhookDataException('JIRA webhook event not set!');
-        }
-
-        if (empty($data['issue_event_type_name']) && empty($data['worklog'])) {
-            throw new JiraWebhookDataException('JIRA issue event type or worklog not set!');
-        }
-
-        if (empty($data['issue']) && empty($data['worklog'])) {
-            throw new JiraWebhookDataException('JIRA issue or worklog not set!');
         }
     }
 

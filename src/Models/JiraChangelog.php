@@ -25,6 +25,13 @@ class JiraChangelog extends AbstractModel
     public array $items = [];
 
     /**
+     * @var array<string> Array of required keys in data
+     */
+    protected array $required = [
+        'id',
+    ];
+
+    /**
      * @throws JiraWebhookDataException
      */
     public function __construct(array $data = null)
@@ -38,30 +45,6 @@ class JiraChangelog extends AbstractModel
                 $this->pushItem(new JiraChangelogItem($item));
             }
         }
-    }
-
-    /**
-     * @throws JiraWebhookDataException
-     */
-    public function validate(array $data): void
-    {
-        if (empty($data['id'])) {
-            throw new JiraWebhookDataException('JIRA changelog id does not exist!');
-        }
-    }
-
-    /**
-     * Check if JIRA issue was assigned
-     */
-    public function isIssueAssigned(): bool
-    {
-        foreach ($this->items as $item) {
-            if ($item->getField() === 'assignee') {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     protected function pushItem(JiraChangelogItem $item): void

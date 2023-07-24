@@ -43,6 +43,14 @@ class JiraChangelogItem extends AbstractModel
     public ?string $toString;
 
     /**
+     * @var array<string> Array of required keys in data
+     */
+    protected array $required = [
+        'field',
+        'fieldtype'
+    ];
+
+    /**
      * @throws JiraWebhookDataException
      */
     public function __construct(array $data = null)
@@ -56,20 +64,6 @@ class JiraChangelogItem extends AbstractModel
             $this->fromString = $data['fromString'] ?? null;
             $this->to = $data['to'] ?? null;
             $this->toString = $data['toString'] ?? null;
-        }
-    }
-
-    /**
-     * @throws JiraWebhookDataException
-     */
-    public function validate(array $data): void
-    {
-        if (empty($data['field'])) {
-            throw new JiraWebhookDataException('JIRA changelog item fields does not exist!');
-        }
-
-        if (empty($data['fieldtype'])) {
-            throw new JiraWebhookDataException('JIRA changelog item fieldtype does not exist!');
         }
     }
 }

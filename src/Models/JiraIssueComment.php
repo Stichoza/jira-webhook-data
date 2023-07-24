@@ -48,6 +48,16 @@ class JiraIssueComment extends AbstractModel
     public ?string $updated;
 
     /**
+     * @var array<string> Array of required keys in data
+     */
+    protected array $required = [
+        'id',
+        'author',
+        'updateAuthor',
+        'body',
+    ];
+
+    /**
      * @throws JiraWebhookDataException
      */
     public function __construct(array $data = null)
@@ -62,30 +72,6 @@ class JiraIssueComment extends AbstractModel
             $this->updateAuthor = new JiraUser($data['updateAuthor']);
             $this->created = $data['created'] ?? null;
             $this->updated = $data['updated'] ?? null;
-        }
-    }
-
-    /**
-     * Validates if the necessary parameters have been provided
-     *
-     * @throws JiraWebhookDataException
-     */
-    public function validate($data): void
-    {
-        if (empty($data['id'])) {
-            throw new JiraWebhookDataException('JIRA issue comment id does not exist!');
-        }
-
-        if (empty($data['author'])) {
-            throw new JiraWebhookDataException('JIRA issue comment author does not exist!');
-        }
-
-        if (empty($data['updateAuthor'])) {
-            throw new JiraWebhookDataException('JIRA issue comment update author does not exist!');
-        }
-
-        if (empty($data['body'])) {
-            throw new JiraWebhookDataException('JIRA issue comment body does not exist!');
         }
     }
 

@@ -13,6 +13,11 @@ use Stichoza\JiraWebhooksData\Exceptions\JiraWebhookDataException;
 class JiraUser extends AbstractModel
 {
     /**
+     * Account id of user
+     */
+    public string $accountId;
+
+    /**
      * JIRA user self URL
      */
     public ?string $self;
@@ -53,6 +58,13 @@ class JiraUser extends AbstractModel
     public ?string $timeZone;
 
     /**
+     * @var array<string> Array of required keys in data
+     */
+    protected array $required = [
+        'accountId',
+    ];
+
+    /**
      * @throws JiraWebhookDataException
      */
     public function __construct(array $data = null)
@@ -60,24 +72,15 @@ class JiraUser extends AbstractModel
         if ($data !== null) {
             $this->validate($data);
 
+            $this->accountId = $data['accountId'];
             $this->self = $data['self'] ?? null;
-            $this->name = $data['name'] ?? $data['displayName']; // Checked in validate()
+            $this->name = $data['name'] ?? $data['displayName'] ?? null; // Checked in validate()
             $this->key = $data['key'] ?? null;
             $this->email = $data['emailAddress'] ?? null;
             $this->avatarURLs = $data['avatarUrls'] ?? [];
             $this->displayName = $data['displayName'] ?? null;
             $this->active = $data['active'] ?? null;
             $this->timeZone = $data['timeZone'] ?? null;
-        }
-    }
-
-    /**
-     * @throws JiraWebhookDataException
-     */
-    public function validate(array $data): void
-    {
-        if (empty($data['name']) && empty($data['displayName'])) {
-            throw new JiraWebhookDataException('JIRA issue user name does not exist!');
         }
     }
 }

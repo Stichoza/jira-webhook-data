@@ -63,6 +63,16 @@ class JiraWorklog extends AbstractModel
     public ?string $started;
 
     /**
+     * @var array<string> Array of required keys in data
+     */
+    protected array $required = [
+        'id',
+        'issueId',
+        'author',
+        'timeSpentSeconds',
+    ];
+
+    /**
      * @throws JiraWebhookDataException
      */
     public function __construct(array $data = null)
@@ -80,27 +90,6 @@ class JiraWorklog extends AbstractModel
             $this->created = $data['created'] ?? null;
             $this->updated = $data['updated'] ?? null;
             $this->started = $data['started'] ?? null;
-        }
-    }
-
-    /**
-     * Validates if the necessary parameters have been provided
-     *
-     * @throws JiraWebhookDataException
-     */
-    public function validate($data): void
-    {
-        if (empty($data['id'])) {
-            throw new JiraWebhookDataException('JIRA worklog id does not exist!');
-        }
-        if (empty($data['issueId'])) {
-            throw new JiraWebhookDataException('JIRA worklog issue id does not exist!');
-        }
-        if (empty($data['author'])) {
-            throw new JiraWebhookDataException('JIRA worklog author does not exist!');
-        }
-        if (empty($data['timeSpentSeconds'])) {
-            throw new JiraWebhookDataException('JIRA worklog time spent in sec does not exist!');
         }
     }
 }
