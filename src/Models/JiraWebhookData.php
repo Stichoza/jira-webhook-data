@@ -32,33 +32,25 @@ class JiraWebhookData
     protected ?JiraWorklog $workLog;
 
     /**
-     * Parsing JIRA webhook $data
-     *
      * @throws JiraWebhookDataException
      */
-    public static function parse(array $data = null): self
+    public function __construct(array $data = null)
     {
-        $webhookData = new self;
+        if ($data !== null) {
+            $this->setRawData($data);
 
-        if (!$data) {
-            return $webhookData;
+            $this->validate($data);
+
+            $this->setTimestamp($data['timestamp']);
+            $this->setWebhookEvent($data['webhookEvent']);
+            $this->setIssueEvent($data['issue_event_type_name']);
+
+            // For worklogs, best to get the user from the author fields prior to calling this hook.
+            $this->setUser(new JiraUser($data['user']));
+            $this->setIssue(new JiraIssue($data['issue']));
+            $this->setChangelog(new JiraChangelog($data['changelog']));
+            $this->setWorklog(new JiraWorklog($data['worklog']));
         }
-
-        $webhookData->setRawData($data);
-
-        $webhookData->validate($data);
-
-        $webhookData->setTimestamp($data['timestamp']);
-        $webhookData->setWebhookEvent($data['webhookEvent']);
-        $webhookData->setIssueEvent($data['issue_event_type_name']);
-
-        // For worklogs, best to get the user from the author fields prior to calling this hook.
-        $webhookData->setUser(JiraUser::parse($data['user']));
-        $webhookData->setIssue(JiraIssue::parse($data['issue']));
-        $webhookData->setChangelog(JiraChangelog::parse($data['changelog']));
-        $webhookData->setWorklog(JiraWorklog::parse($data['worklog']));
-
-        return $webhookData;
     }
 
     /**

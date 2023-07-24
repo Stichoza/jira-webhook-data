@@ -43,28 +43,20 @@ class JiraChangelogItem
     protected ?string $toString;
 
     /**
-     * Parsing JIRA changelog item data
-     *
      * @throws JiraWebhookDataException
      */
-    public static function parse(array $data = null): self
+    public function __construct(array $data = null)
     {
-        $changelogItemData = new self;
+        if ($data !== null) {
+            $this->validate($data);
 
-        if (!$data) {
-            return $changelogItemData;
+            $this->setField($data['field']);
+            $this->setFieldType($data['fieldtype']);
+            $this->setFrom($data['from'] ?? null);
+            $this->setFromString($data['fromString'] ?? null);
+            $this->setTo($data['to'] ?? null);
+            $this->setToString($data['toString'] ?? null);
         }
-
-        $changelogItemData->validate($data);
-
-        $changelogItemData->setField($data['field']);
-        $changelogItemData->setFieldType($data['fieldtype']);
-        $changelogItemData->setFrom($data['from'] ?? null);
-        $changelogItemData->setFromString($data['fromString'] ?? null);
-        $changelogItemData->setTo($data['to'] ?? null);
-        $changelogItemData->setToString($data['toString'] ?? null);
-
-        return $changelogItemData;
     }
 
     /**

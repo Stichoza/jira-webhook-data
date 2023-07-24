@@ -80,38 +80,30 @@ class JiraIssue
     protected array $fields = [];
 
     /**
-     * Parsing JIRA issue $data
-     *
      * @throws JiraWebhookDataException
      */
-    public static function parse(array $data = null): self
+    public function __construct(array $data = null)
     {
-        $issueData = new self;
+        if ($data !== null) {
+            $this->validate($data);
 
-        if (!$data) {
-            return $issueData;
+            $issueFields = $data['fields'];
+            $this->setFields($issueFields);
+
+            $this->setId((int) $data['id']);
+            $this->setSelf($data['self']);
+            $this->setKey($data['key']);
+            $this->setUrl($data['key'], $data['self']);
+            $this->setIssueTypeName($issueFields['issuetype']['name']);
+            $this->setProjectKey($issueFields['project']['key'] ?? null);
+            $this->setProjectName($issueFields['project']['name'] ?? null);
+            $this->setPriorityName($issueFields['priority']['name']);
+            $this->setLabels($issueFields['labels'] ?? []);
+            $this->setAssignee(empty($issueFields['assignee']) ? null : new JiraUser($issueFields['assignee']));
+            $this->setStatusName($issueFields['status']['name'] ?? null);
+            $this->setSummary($issueFields['summary'] ?? null);
+            $this->setIssueComments(new JiraIssueComments($data['fields']['comment'] ?? []));
         }
-
-        $issueData->validate($data);
-
-        $issueFields = $data['fields'];
-        $issueData->setFields($issueFields);
-
-        $issueData->setId((int) $data['id']);
-        $issueData->setSelf($data['self']);
-        $issueData->setKey($data['key']);
-        $issueData->setUrl($data['key'], $data['self']);
-        $issueData->setIssueTypeName($issueFields['issuetype']['name']);
-        $issueData->setProjectKey($issueFields['project']['key'] ?? null);
-        $issueData->setProjectName($issueFields['project']['name'] ?? null);
-        $issueData->setPriorityName($issueFields['priority']['name']);
-        $issueData->setLabels($issueFields['labels'] ?? []);
-        $issueData->setAssignee(empty($issueFields['assignee']) ? null : JiraUser::parse($issueFields['assignee']));
-        $issueData->setStatusName($issueFields['status']['name'] ?? null);
-        $issueData->setSummary($issueFields['summary'] ?? null);
-        $issueData->setIssueComments(JiraIssueComments::parse($data['fields']['comment'] ?? []));
-
-        return $issueData;
     }
 
     /**

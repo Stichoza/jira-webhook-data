@@ -25,27 +25,19 @@ class JiraChangelog
     protected array $items = [];
 
     /**
-     * Parsing JIRA changelog data
-     *
      * @throws JiraWebhookDataException
      */
-    public static function parse(array $data = null): self
+    public function __construct(array $data = null)
     {
-        $changelogData = new self;
+        if ($data !== null) {
+            $this->validate($data);
 
-        if (!$data) {
-            return $changelogData;
+            $this->setId((int) $data['id']);
+
+            foreach ($data['items'] ?? [] as $item) {
+                $this->pushItem(new JiraChangelogItem($item));
+            }
         }
-
-        $changelogData->validate($data);
-
-        $changelogData->setId((int) $data['id']);
-
-        foreach ($data['items'] ?? [] as $item) {
-            $changelogData->pushItem(JiraChangelogItem::parse($item));
-        }
-
-        return $changelogData;
     }
 
     /**

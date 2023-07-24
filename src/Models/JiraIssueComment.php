@@ -48,29 +48,21 @@ class JiraIssueComment
     protected ?string $updated;
 
     /**
-     * Parsing JIRA issue comment $data
-     *
      * @throws JiraWebhookDataException
      */
-    public static function parse(array $data = null): self
+    public function __construct(array $data = null)
     {
-        $commentData = new self;
+        if ($data !== null) {
+            $this->validate($data);
 
-        if (!$data) {
-            return $commentData;
+            $this->setSelf($data['self'] ?? null);
+            $this->setId((int) $data['id']);
+            $this->setAuthor(new JiraUser($data['author']));
+            $this->setBody($data['body'] ?? '');
+            $this->setUpdateAuthor(new JiraUser($data['updateAuthor']));
+            $this->setCreated($data['created'] ?? null);
+            $this->setUpdated($data['updated'] ?? null);
         }
-
-        $commentData->validate($data);
-
-        $commentData->setSelf($data['self'] ?? null);
-        $commentData->setId((int) $data['id']);
-        $commentData->setAuthor(JiraUser::parse($data['author']));
-        $commentData->setBody($data['body'] ?? '');
-        $commentData->setUpdateAuthor(JiraUser::parse($data['updateAuthor']));
-        $commentData->setCreated($data['created'] ?? null);
-        $commentData->setUpdated($data['updated'] ?? null);
-
-        return $commentData;
     }
 
     /**

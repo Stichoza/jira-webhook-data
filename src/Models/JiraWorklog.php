@@ -63,32 +63,24 @@ class JiraWorklog
     protected ?string $started;
 
     /**
-     * Parsing JIRA worklog data
-     *
      * @throws JiraWebhookDataException
      */
-    public static function parse(array $data = null): self
+    public function __construct(array $data = null)
     {
-        $worklogData = new self;
+        if ($data !== null) {
+            $this->validate($data);
 
-        if (!$data) {
-            return $worklogData;
+            $this->setId((int) $data['id']);
+            $this->setSelf($data['self'] ?? null);
+            $this->setIssueId((int) $data['issueId']);
+            $this->setAuthor(new JiraUser($data['author']));
+            $this->setTimeSpentSeconds((int) $data['timeSpentSeconds']);
+
+            $this->setComment($data['comment'] ?? null);
+            $this->setCreatedDate($data['created'] ?? null);
+            $this->setUpdatedDate($data['updated'] ?? null);
+            $this->setStartedDate($data['started'] ?? null);
         }
-
-        $worklogData->validate($data);
-
-        $worklogData->setId((int) $data['id']);
-        $worklogData->setSelf($data['self'] ?? null);
-        $worklogData->setIssueId((int) $data['issueId']);
-        $worklogData->setAuthor(JiraUser::parse($data['author']));
-        $worklogData->setTimeSpentSeconds((int) $data['timeSpentSeconds']);
-
-        $worklogData->setComment($data['comment'] ?? null);
-        $worklogData->setCreatedDate($data['created'] ?? null);
-        $worklogData->setUpdatedDate($data['updated'] ?? null);
-        $worklogData->setStartedDate($data['started'] ?? null);
-
-        return $worklogData;
     }
 
     /**
@@ -166,7 +158,7 @@ class JiraWorklog
    */
     public function setIssueFromData(array $data): void
     {
-        $this->issue = JiraIssue::parse($data);
+        $this->issue = new JiraIssue($data);
     }
 
     /**************************************************/

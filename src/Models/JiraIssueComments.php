@@ -35,27 +35,19 @@ class JiraIssueComments
     protected ?int $startAt;
 
     /**
-     * Parsing JIRA issue comments $data
-     *
      * @throws JiraWebhookDataException
      */
-    public static function parse(array $data = null): self
+    public function __construct(array $data = null)
     {
-        $issueCommentsData = new self;
+        if ($data !== null) {
+            foreach ($data['comments'] ?? [] as $comment) {
+                $this->pushComment(new JiraIssueComment($comment));
+            }
 
-        if (!$data) {
-            return $issueCommentsData;
+            $this->setMaxResults($data['maxResults'] ?? null);
+            $this->setTotal($data['total'] ?? null);
+            $this->setStartAt($data['startAt'] ?? null);
         }
-
-        foreach ($data['comments'] ?? [] as $comment) {
-            $issueCommentsData->pushComment(JiraIssueComment::parse($comment));
-        }
-
-        $issueCommentsData->setMaxResults($data['maxResults'] ?? null);
-        $issueCommentsData->setTotal($data['total'] ?? null);
-        $issueCommentsData->setStartAt($data['startAt'] ?? null);
-
-        return $issueCommentsData;
     }
 
     /**

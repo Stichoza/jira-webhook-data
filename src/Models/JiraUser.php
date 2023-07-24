@@ -53,30 +53,22 @@ class JiraUser
     protected ?string $timeZone;
 
     /**
-     * Parsing JIRA user data
-     *
      * @throws JiraWebhookDataException
      */
-    public static function parse(array $data = null): self
+    public function __construct(array $data = null)
     {
-        $userData = new self;
+        if ($data !== null) {
+            $this->validate($data);
 
-        if (!$data) {
-            return $userData;
+            $this->setSelf($data['self'] ?? null);
+            $this->setName($data['name'] ?? $data['displayName']); // Checked in validate()
+            $this->setKey($data['key'] ?? null);
+            $this->setEmail($data['emailAddress'] ?? null);
+            $this->setAvatarURLs($data['avatarUrls'] ?? []);
+            $this->setDisplayName($data['displayName'] ?? null);
+            $this->setActive($data['active'] ?? null);
+            $this->setTimeZone($data['timeZone'] ?? null);
         }
-
-        $userData->validate($data);
-
-        $userData->setSelf($data['self'] ?? null);
-        $userData->setName($data['name'] ?? $data['displayName']); // Checked in validate()
-        $userData->setKey($data['key'] ?? null);
-        $userData->setEmail($data['emailAddress'] ?? null);
-        $userData->setAvatarURLs($data['avatarUrls'] ?? []);
-        $userData->setDisplayName($data['displayName'] ?? null);
-        $userData->setActive($data['active'] ?? null);
-        $userData->setTimeZone($data['timeZone'] ?? null);
-
-        return $userData;
     }
 
     /**

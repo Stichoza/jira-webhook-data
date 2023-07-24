@@ -22,7 +22,7 @@ $data = [
     // JIRA webhook data
 ];
 
-$webhookData = JiraWebhookData::parse($data);
+$webhookData = new JiraWebhookData($data);
 
 // Access parsed data
 $webhookData->getRawData();
