@@ -29,7 +29,7 @@ class JiraWebhookData
 
     protected ?JiraChangelog $changelog;
 
-    protected ?JiraWorklog $workLog;
+    protected ?JiraWorklog $worklog;
 
     /**
      * @throws JiraWebhookDataException
@@ -37,19 +37,18 @@ class JiraWebhookData
     public function __construct(array $data = null)
     {
         if ($data !== null) {
-            $this->setRawData($data);
-
             $this->validate($data);
 
-            $this->setTimestamp($data['timestamp']);
-            $this->setWebhookEvent($data['webhookEvent']);
-            $this->setIssueEvent($data['issue_event_type_name']);
+            $this->rawData = $data;
+            $this->timestamp = $data['timestamp'];
+            $this->webhookEvent = $data['webhookEvent'];
+            $this->issueEvent = $data['issue_event_type_name'];
 
             // For worklogs, best to get the user from the author fields prior to calling this hook.
-            $this->setUser(new JiraUser($data['user']));
-            $this->setIssue(new JiraIssue($data['issue']));
-            $this->setChangelog(new JiraChangelog($data['changelog']));
-            $this->setWorklog(new JiraWorklog($data['worklog']));
+            $this->user = empty($data['user']) ? null : new JiraUser($data['user']);
+            $this->issue = empty($data['issue']) ? null : new JiraIssue($data['issue']);
+            $this->changelog = empty($data['changelog']) ? null : new JiraChangelog($data['changelog']);
+            $this->worklog = empty($data['worklog']) ? null : new JiraWorklog($data['worklog']);
         }
     }
 
@@ -87,92 +86,5 @@ class JiraWebhookData
         preg_match_all("/#([A-Za-z0-9]*)/", $string, $matches);
 
         return $matches[1];
-    }
-
-    /**************************************************/
-
-    /**
-     * Set raw array, decoded from JIRA webhook
-     */
-    public function setRawData(array $rawData): void
-    {
-        $this->rawData = $rawData;
-    }
-
-    public function setTimestamp(int $timestamp): void
-    {
-        $this->timestamp = $timestamp;
-    }
-
-    public function setWebhookEvent(string $webhookEvent): void
-    {
-        $this->webhookEvent = $webhookEvent;
-    }
-
-    public function setIssueEvent(string $issueEvent): void
-    {
-        $this->issueEvent = $issueEvent;
-    }
-
-    public function setUser(JiraUser $user): void
-    {
-        $this->user = $user;
-    }
-
-    public function setIssue(JiraIssue $issue): void
-    {
-        $this->issue = $issue;
-    }
-
-    public function setChangelog(JiraChangelog $changelog): void
-    {
-        $this->changelog = $changelog;
-    }
-
-    public function setWorklog(JiraWorklog $worklog): void
-    {
-        $this->workLog = $worklog;
-    }
-
-    /**************************************************/
-
-    public function getRawData(): array
-    {
-        return $this->rawData;
-    }
-
-    public function getTimestamp(): ?int
-    {
-        return $this->timestamp;
-    }
-
-    public function getWebhookEvent(): string
-    {
-        return $this->webhookEvent;
-    }
-
-    public function getIssueEvent(): ?string
-    {
-        return $this->issueEvent;
-    }
-
-    public function getUser(): ?JiraUser
-    {
-        return $this->user;
-    }
-
-    public function getIssue(): ?JiraIssue
-    {
-        return $this->issue;
-    }
-
-    public function getChangelog(): ?JiraChangelog
-    {
-        return $this->changelog;
-    }
-
-    public function getWorklog(): ?JiraWorklog
-    {
-        return $this->workLog;
     }
 }
