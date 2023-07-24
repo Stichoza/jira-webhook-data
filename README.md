@@ -17,7 +17,7 @@ Install this package with Composer:
 composer require stichoza/jira-webhook-data
 ```
 
-# Usage  
+## Usage  
 
 ```php
 // Example payload received from Jira webhook
@@ -102,3 +102,28 @@ if ($user && $user->active) {
 ```
 
 Read more about properties and methods in the `src/Models` folder.
+
+## Error Handling
+
+Object constructors will throw a `Stichoza\JiraWebhooksData\Exceptions\JiraWebhookDataException` exception when incorrect or insufficient data is provided. Make sure you wrap your code in try-catch block.
+
+```php
+use Stichoza\JiraWebhooksData\Models\JiraWebhookData;
+use Stichoza\JiraWebhooksData\Exceptions\JiraWebhookDataException;
+
+try {
+    $webhookData = new JiraWebhookData($data);
+} catch (JiraWebhookDataException $e) {
+    // Handle the error
+}
+```
+
+Also keep in mind that certain properties will not be present in response depending on the Jira event. Make sure you check that objects/properties are not null.
+
+```php
+$to = $webhookData->issue?->assignee?->email;
+
+if ($to !== null) {
+    // Do something
+}
+```
