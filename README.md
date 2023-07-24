@@ -84,9 +84,9 @@ if ($user) {
 Access specific properties from the `JiraChangelog` instance
 
 ```php
-    $changelogId = $changelog->id;
-    $changelogItems = $changelog->items; // Array of JiraChangelogItem instances
-    // ... and other properties ...
+$changelogId = $changelog->id;
+$changelogItems = $changelog->items; // Array of JiraChangelogItem instances
+// ... and other properties ...
 ```
 
 You can also perform additional checks or operations based on the parsed data
